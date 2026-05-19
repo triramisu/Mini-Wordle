@@ -1,6 +1,7 @@
 class GameWordle {
     constructor(boardEl, keyboardEl, msgEl) {
         this.WORDS = [];
+        this.ANSWERS = [];
         this.inputLockedUntil = 0;
         this.gameVersion = 0;
         this.ROWS = 6;
@@ -14,7 +15,10 @@ class GameWordle {
         this.curCol = 0;
         this.gameOver = false;
         this.keyState = {};
-        this.githubRawUrl = "https://raw.githubusercontent.com/tabatkins/wordle-list/main/words";
+
+        this.answersUrl = "https://gist.githubusercontent.com/cfreshman/a03ef2cba789d8cf00c08f767e0fad7b/raw/";
+        this.guessesUrl = "https://gist.githubusercontent.com/cfreshman/cdcdf777450c5b5301e439061d29694c/raw/";
+
         this.handleKeyDown = (e) => this.onKeyDown(e);
         window.addEventListener("keydown", this.handleKeyDown);
     }
@@ -28,11 +32,23 @@ class GameWordle {
 
         try {
             if (this.WORDS.length === 0) {
-                const response = await fetch(this.githubRawUrl);
-                const text = await response.text();
-                this.WORDS = text.split('\n').map(w => w.trim().toUpperCase()).filter(w => w.length === 5);
+                const ansRes = await fetch(this.answersUrl);
+                const ansText = await ansRes.text();
+                this.ANSWERS = ansText.split('\n').map(w => w.trim().toUpperCase()).filter(w => w.length === 5);
+
+                const guessRes = await fetch(this.guessesUrl);
+                const guessText = await guessRes.text();
+                const guesses = guessText.split('\n').map(w => w.trim().toUpperCase()).filter(w => w.length === 5);
+
+                this.WORDS = [...this.ANSWERS, ...guesses];
             }
-            this.solution = this.WORDS[Math.floor(Math.random() * this.WORDS.length)];
+
+            if (this.WORDS.length === 0) {
+                throw new Error("Empty Dictionary");
+            }
+
+            this.solution = this.ANSWERS[Math.floor(Math.random() * this.ANSWERS.length)];
+
             const alertEl = document.getElementById('loadingMsg');
             if(alertEl) alertEl.style.display = 'none';
             document.getElementById('newGame').disabled = false;
@@ -40,6 +56,7 @@ class GameWordle {
             this.msgEl.className = "h5 mb-3 fw-bold";
         } catch (error) {
             this.msgEl.textContent = "Lỗi tải dữ liệu!";
+            this.msgEl.className = "alert alert-danger text-center px-4 py-2 small";
             return;
         }
 
@@ -127,11 +144,6 @@ class GameWordle {
         const guess = this.grid[this.curRow].join("");
         if (!this.WORDS.includes(guess)) {
             this.showMessage("Từ không có trong từ điển!", 1500, "text-danger");
-            for (let i = 0; i < this.COLS; i++) {
-                this.grid[this.curRow][i] = "";
-                this.updateTile(this.curRow, i, "");
-            }
-            this.curCol = 0;
             return;
         }
 
@@ -200,11 +212,59 @@ class GameWordle {
         });
     }
 
-    saveFlashcard(word) {
+    async saveFlashcard(word) {
+        let meaning = "";
+        let phonetic = "";
+        let partOfSpeech = "";
+        let englishDefinition = "";
+        let usageExample = "";
+
+        try {
+            const transRes = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=${word}`);
+            if (transRes.ok) {
+                const transData = await transRes.json();
+                if (transData && transData[0] && transData[0][0] && transData[0][0][0]) {
+                    meaning = transData[0][0][0].toLowerCase();
+                }
+            }
+        } catch (e) {}
+
+        try {
+            const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+            if (dictRes.ok) {
+                const dictData = await dictRes.json();
+                const entry = dictData[0];
+                if (entry) {
+                    if (entry.phonetic) phonetic = entry.phonetic;
+                    else if (entry.phonetics && entry.phonetics.length > 0) {
+                        const p = entry.phonetics.find(x => x.text);
+                        if (p) phonetic = p.text;
+                    }
+
+                    if (entry.meanings && entry.meanings.length > 0) {
+                        for (let m of entry.meanings) {
+                            if (!partOfSpeech) partOfSpeech = m.partOfSpeech;
+                            for (let d of m.definitions) {
+                                if (!englishDefinition && d.definition) englishDefinition = d.definition;
+                                if (!usageExample && d.example) usageExample = d.example;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e) {}
+
         fetch('/api/flashcards', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ word: word })
+            body: JSON.stringify({
+                word: word,
+                phonetic: phonetic,
+                partOfSpeech: partOfSpeech,
+                meaning: meaning,
+                englishDefinition: englishDefinition,
+                usageExample: usageExample
+            })
         });
     }
 
