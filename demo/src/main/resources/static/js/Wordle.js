@@ -144,6 +144,11 @@ class GameWordle {
         const guess = this.grid[this.curRow].join("");
         if (!this.WORDS.includes(guess)) {
             this.showMessage("Từ không có trong từ điển!", 1500, "text-danger");
+            for (let i = 0; i < this.COLS; i++) {
+                this.grid[this.curRow][i] = "";
+                this.updateTile(this.curRow, i, "");
+            }
+            this.curCol = 0;
             return;
         }
 
