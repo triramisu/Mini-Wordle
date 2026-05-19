@@ -1,11 +1,6 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,12 +16,17 @@ public class Flashcard {
     private Long id;
 
     private String word;
+    private String phonetic;
+    private String partOfSpeech;
 
     @Column(columnDefinition = "TEXT")
-    private String meaning;
+    private String meaning; // Nghĩa Tiếng Việt
 
     @Column(columnDefinition = "TEXT")
-    private String usageExample;
+    private String englishDefinition; // Định nghĩa Tiếng Anh
+
+    @Column(columnDefinition = "TEXT")
+    private String usageExample; // Ví dụ
 
 
 }
