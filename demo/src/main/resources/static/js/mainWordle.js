@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const msgEl = document.getElementById("msg");
     const newGameBtn = document.getElementById("newGame");
 
-    // Khởi tạo Game (có sử dụng await vì load từ GitHub)
     const game = new GameWordle(boardEl, keyboardEl, msgEl);
     game.init();
 
@@ -13,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
         game.init();
     });
 
-    // === XỬ LÝ FLASHCARD VỚI BOOTSTRAP 5 ===
     const flashcardModal = new bootstrap.Modal(document.getElementById('flashcardModal'));
     const showBtn = document.getElementById("showFlashcards");
     const fcWord = document.getElementById("fcWord");
@@ -51,12 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const id = flashcards[currentFcIndex].id;
             fetch(`/api/flashcards/${id}`, { method: 'DELETE' })
                 .then(() => {
-                    flashcards.splice(currentFcIndex, 1); // Xoá khỏi mảng JS
+                    flashcards.splice(currentFcIndex, 1);
                     if (flashcards.length > 0) {
                         if (currentFcIndex >= flashcards.length) currentFcIndex = 0;
                         displayFlashcard();
                     } else {
-                        flashcardModal.hide(); // Hết từ thì đóng Modal
+                        flashcardModal.hide();
                         alert("Tuyệt vời! Bạn đã thuộc hết tất cả từ vựng.");
                     }
                 });
