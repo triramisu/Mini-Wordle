@@ -8,10 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FlashcardDTO {
-
     private Long id;
     private String word;
+    private String phonetic;
+    private String partOfSpeech;
     private String meaning;
+    private String englishDefinition;
     private String usageExample;
 
 
