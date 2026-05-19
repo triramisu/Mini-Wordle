@@ -10,15 +10,9 @@
 <body class="bg-dark text-light d-flex flex-column align-items-center justify-content-start min-vh-100 py-4">
 
 <h1 class="fw-bold mb-3 text-uppercase" style="letter-spacing: 2px;">Mini Wordle</h1>
-
-<div id="loadingMsg" class="alert alert-secondary text-center px-4 py-2 small" style="max-width: 400px;">
-    Đang tải dữ liệu...
-</div>
-
+<div id="loadingMsg" class="alert alert-secondary text-center px-4 py-2 small" style="max-width: 400px;">Đang tải dữ liệu...</div>
 <div id="msg" class="h5 mb-3 fw-bold text-center" style="height: 24px;"></div>
-
 <div id="board" class="mb-4"></div>
-
 <div id="keyboard" class="mb-4 w-100 px-2" style="max-width: 500px;"></div>
 
 <div class="d-flex gap-3 mt-2">
@@ -28,20 +22,30 @@
 
 <div class="modal fade" id="flashcardModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-secondary text-light shadow-lg border-0">
-            <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title fw-bold">Flashcard</h5>
+        <div class="modal-content text-dark shadow-lg border-0 rounded-4" style="background-color: #f3f4f6;">
+            <div class="modal-header border-0 bg-primary text-white rounded-top-4 py-2">
+                <h6 class="modal-title fw-bold mb-0">Từ điển Wordle</h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center py-4">
-                <div class="bg-dark rounded p-5 mb-4 shadow-sm border border-secondary">
-                    <h1 id="fcWord" class="display-3 fw-bold text-uppercase text-white mb-3"></h1>
-                    <a id="fcLink" target="_blank" class="btn btn-outline-info rounded-pill px-4">Tra nghĩa</a>
+            <div class="modal-body p-4 bg-white">
+                <div class="d-flex align-items-baseline gap-2 mb-1">
+                    <h1 id="fcWord" class="fw-bold text-dark mb-0 text-lowercase" style="font-size: 2.5rem;"></h1>
+                    <span id="fcPhonetic" class="text-secondary fs-5 font-monospace"></span>
                 </div>
-                <div class="d-flex justify-content-center gap-3">
-                    <button id="fcLearned" class="btn btn-success fw-bold px-4">Đã thuộc (Xoá)</button>
-                    <button id="fcNext" class="btn btn-light fw-bold px-4 text-dark">Từ tiếp theo</button>
+
+                <div class="mb-3">
+                    <span id="fcPartOfSpeech" class="badge bg-secondary text-white fst-italic px-3 py-1 fs-6"></span>
                 </div>
+
+                <div class="ps-3 border-start border-4 border-warning">
+                    <h4 id="fcMeaning" class="text-danger fw-bold mb-2"></h4>
+                    <p class="text-dark mb-1"><strong>Định nghĩa:</strong> <span id="fcEngDef"></span></p>
+                    <p class="text-secondary fst-italic mb-0"><strong>Ví dụ:</strong> <span id="fcUsage"></span></p>
+                </div>
+            </div>
+            <div class="d-flex p-3 bg-light rounded-bottom-4 gap-2 border-top">
+                <button id="fcLearned" class="btn btn-success fw-bold w-50 py-2">Đã thuộc (Xoá)</button>
+                <button id="fcNext" class="btn btn-outline-primary fw-bold w-50 py-2">Từ tiếp theo</button>
             </div>
         </div>
     </div>
