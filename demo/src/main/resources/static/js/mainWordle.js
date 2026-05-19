@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const flashcardModal = new bootstrap.Modal(document.getElementById('flashcardModal'));
     const showBtn = document.getElementById("showFlashcards");
     const fcWord = document.getElementById("fcWord");
-    const fcLink = document.getElementById("fcLink");
     const fcLearnedBtn = document.getElementById("fcLearned");
     const fcNextBtn = document.getElementById("fcNext");
 
@@ -31,8 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (flashcards.length > 0) {
                     displayFlashcard();
                     flashcardModal.show();
-                } else {
-                    alert("Chưa có từ nào trong Flashcard! Hãy chơi game để lưu thêm từ.");
                 }
             });
     }
@@ -55,15 +52,27 @@ document.addEventListener("DOMContentLoaded", () => {
                         displayFlashcard();
                     } else {
                         flashcardModal.hide();
-                        alert("Tuyệt vời! Bạn đã thuộc hết tất cả từ vựng.");
                     }
                 });
         }
     }
 
     function displayFlashcard() {
-        const word = flashcards[currentFcIndex].word;
-        fcWord.textContent = word;
-        fcLink.href = `https://translate.google.com/?sl=en&tl=vi&text=${encodeURIComponent(word)}&op=translate`;
+        const card = flashcards[currentFcIndex];
+        document.getElementById("fcWord").textContent = card.word;
+
+        document.getElementById("fcPhonetic").textContent = card.phonetic ? card.phonetic : "";
+
+        const posEl = document.getElementById("fcPartOfSpeech");
+        if (card.partOfSpeech) {
+            posEl.textContent = card.partOfSpeech;
+            posEl.style.display = "inline-block";
+        } else {
+            posEl.style.display = "none";
+        }
+
+        document.getElementById("fcMeaning").textContent = card.meaning ? card.meaning : "Không có dữ liệu dịch";
+        document.getElementById("fcEngDef").textContent = card.englishDefinition ? card.englishDefinition : "Không có định nghĩa";
+        document.getElementById("fcUsage").textContent = card.usageExample ? `"${card.usageExample}"` : "Không có ví dụ";
     }
 });
